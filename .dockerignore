@@ -1,0 +1,4 @@
+# ignore any temp files
+*/temp*
+*/*/temp*
+temp?
