@@ -1,35 +1,17 @@
 pipeline {
-    environment {
-        registry = "YourDockerhubAccount/YourRepository"
-        registryCredential = 'dockerhub_id'
-        dockerImage = ''
+    agent {
+        dockerfile {
+            filename "Dockerfile"
+            // args '-p 8989:8989'
+            additionalBuildArgs "-t python3-poetry:latest"
+        }
     }
-    agent any
+
     stages {
-        stage('Cloning our Git') {
+        stage("Test") {
             steps {
-                git 'https://github.com/YourGithubAccount/YourGithubRepository.git'
-            }
-        }
-        stage('Building our image') {
-            steps {
-                script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
-                }
-            }
-        }
-        stage('Deploy our image') {
-            steps {
-                script {
-                    docker.withRegistry( '', registryCredential ) {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }
-        stage('Cleaning up') {
-            steps {
-                sh "docker rmi $registry:$BUILD_NUMBER"
+                sh "python --version"
+                sh "poetry --version" // this command gets executed inside the container
             }
         }
     }
